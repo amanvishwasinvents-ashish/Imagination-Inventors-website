@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>About Us | Imagination Inventors</title>
+  <meta name="description" content="Learn about Imagination Inventors, a student-led robotics and AI initiative building intelligent machines in India." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0b0f14',
+            panel: '#111827',
+            accent: '#38bdf8'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="dark bg-bg text-gray-200 font-sans">
+
+  <!-- Navbar -->
+  <nav class="fixed w-full z-50 bg-bg/80 backdrop-blur border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold tracking-wide text-accent">Imagination Inventors</h1>
+      <div class="space-x-6 hidden md:block">
+        <a href="index.html" class="hover:text-accent">Home</a>
+        <a href="about.html" class="text-accent">About</a>
+        <a href="login.html" class="hover:text-accent">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- About Section -->
+  <section class="min-h-screen px-6 pt-32 pb-20">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-4xl md:text-5xl font-extrabold mb-6">Who We Are</h2>
+      <p class="text-gray-400 text-lg leading-relaxed">
+        <span class="text-gray-200 font-semibold">Imagination Inventors</span> is a student-led robotics and artificial intelligence initiative founded in India.
+        We focus on building <span class="text-accent">real, working intelligent machines</span> — not just theory or slides.
+      </p>
+
+      <div class="mt-10 grid md:grid-cols-2 gap-10">
+        <div class="bg-panel rounded-2xl p-6 border border-gray-800">
+          <h3 class="text-2xl font-bold mb-3">🧠 Our Philosophy</h3>
+          <p class="text-gray-400">
+            True innovation comes from understanding fundamentals deeply and applying them creatively.
+            We believe age is not a limitation — curiosity and discipline are.
+          </p>
+        </div>
+
+        <div class="bg-panel rounded-2xl p-6 border border-gray-800">
+          <h3 class="text-2xl font-bold mb-3">⚙️ What We Build</h3>
+          <p class="text-gray-400">
+            Robotics systems, computer vision pipelines, AI-driven interactions, and intelligent hardware
+            that can see, hear, understand, and act.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-14">
+        <h3 class="text-3xl font-bold mb-4">🚀 The Goal</h3>
+        <p class="text-gray-400 text-lg">
+          To grow into a research-driven technology organization while inspiring young innovators
+          to build boldly, think independently, and execute fearlessly.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 border-t border-gray-800 text-center text-gray-500">
+    © 2026 Imagination Inventors · Designed to build the future
+  </footer>
+
+</body>
+</html>

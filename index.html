@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>Imagination Inventors | Building Intelligent Machines</title>
+  <meta name="description" content="Imagination Inventors is a student-led robotics and AI startup turning imagination into intelligent machines." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Imagination Inventors" />
+  <meta property="og:description" content="Turning imagination into intelligent machines." />
+  <meta property="og:type" content="website" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0b0f14',
+            panel: '#111827',
+            accent: '#38bdf8'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="dark bg-bg text-gray-200 font-sans">
+
+  <!-- Navbar -->
+  <nav class="fixed w-full z-50 bg-bg/80 backdrop-blur border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold tracking-wide text-accent">Imagination Inventors</h1>
+      <div class="space-x-6 hidden md:block">
+        <a href="index.html" class="hover:text-accent">Home</a>
+        <a href="about.html" class="hover:text-accent">About</a>
+        <a href="login.html" class="hover:text-accent">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="min-h-screen flex items-center justify-center px-6 pt-20">
+    <div class="text-center max-w-3xl">
+      <h2 class="text-4xl md:text-6xl font-extrabold leading-tight">
+        Turning <span class="text-accent">Imagination</span><br />
+        into Intelligent Machines
+      </h2>
+      <p class="mt-6 text-gray-400 text-lg">
+        A student-led robotics & AI initiative building real-world intelligent systems.
+      </p>
+      <div class="mt-8 flex justify-center gap-4">
+        <a href="about.html" class="px-6 py-3 rounded-xl bg-accent text-black font-semibold hover:scale-105 transition">
+          Learn More
+        </a>
+        <a href="login.html" class="px-6 py-3 rounded-xl border border-gray-700 hover:border-accent transition">
+          Team Login
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="py-24 bg-panel">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
+      <div>
+        <h3 class="text-xl font-bold mb-2">🚀 Mission</h3>
+        <p class="text-gray-400">Build intelligent machines that interact naturally with humans.</p>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold mb-2">🧠 Vision</h3>
+        <p class="text-gray-400">Make advanced AI and robotics accessible to young innovators.</p>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold mb-2">⚙️ Approach</h3>
+        <p class="text-gray-400">Hands-on engineering, real hardware, real intelligence.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 border-t border-gray-800 text-center text-gray-500">
+    © 2026 Imagination Inventors · Built with vision 🧠
+  </footer>
+
+</body>
+</html>

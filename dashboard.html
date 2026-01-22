@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Dashboard | Imagination Inventors</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0b0f14',
+            panel: '#111827',
+            accent: '#38bdf8'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Netlify Identity -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+
+<body class="dark bg-bg text-gray-200 font-sans min-h-screen">
+
+  <!-- Auth Guard -->
+  <script>
+    if (window.netlifyIdentity) {
+      netlifyIdentity.on('init', user => {
+        if (!user) {
+          window.location.href = '/login.html'
+        }
+      })
+    }
+  </script>
+
+  <!-- Navbar -->
+  <nav class="bg-bg border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-accent">Imagination Inventors</h1>
+    <button
+      onclick="netlifyIdentity.logout()"
+      class="text-sm px-4 py-2 border border-gray-700 rounded-lg hover:border-accent transition"
+    >
+      Logout
+    </button>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <main class="px-6 py-12 max-w-6xl mx-auto">
+    <h2 class="text-4xl font-extrabold mb-6">Team Dashboard</h2>
+    <p class="text-gray-400 mb-10">
+      Internal access · Authorized members only
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-panel border border-gray-800 rounded-2xl p-6">
+        <h3 class="text-xl font-bold mb-2">🧠 Projects</h3>
+        <p class="text-gray-400">Internal notes, links, and progress tracking.</p>
+      </div>
+
+      <div class="bg-panel border border-gray-800 rounded-2xl p-6">
+        <h3 class="text-xl font-bold mb-2">🤖 Robotics</h3>
+        <p class="text-gray-400">Hardware status, experiments, and future ideas.</p>
+      </div>
+
+      <div class="bg-panel border border-gray-800 rounded-2xl p-6">
+        <h3 class="text-xl font-bold mb-2">⚙️ System</h3>
+        <p class="text-gray-400">Admin-only tools and configuration (coming soon).</p>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

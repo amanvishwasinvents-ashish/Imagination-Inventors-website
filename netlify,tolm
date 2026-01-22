@@ -1,0 +1,27 @@
+# Netlify configuration for Imagination Inventors
+
+[build]
+  publish = "/"
+
+# -------------------------------
+# 🔐 Protected Routes
+# -------------------------------
+[[redirects]]
+  from = "/dashboard.html"
+  to = "/login.html"
+  status = 302
+  force = true
+  conditions = {Role = ["member", "admin"]}
+
+# -------------------------------
+# 🌍 SEO & Clean URLs (optional future)
+# -------------------------------
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200

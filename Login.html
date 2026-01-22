@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>Team Login | Imagination Inventors</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0b0f14',
+            panel: '#111827',
+            accent: '#38bdf8'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Netlify Identity -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+
+<body class="dark bg-bg text-gray-200 font-sans min-h-screen flex items-center justify-center">
+
+  <div class="bg-panel border border-gray-800 rounded-2xl p-8 w-full max-w-md shadow-xl">
+    <h1 class="text-3xl font-extrabold text-center mb-6">Team Login</h1>
+
+    <p class="text-gray-400 text-center mb-8">
+      Authorized members only.
+    </p>
+
+    <button
+      onclick="netlifyIdentity.open()"
+      class="w-full py-3 rounded-xl bg-accent text-black font-semibold hover:scale-105 transition"
+    >
+      Login
+    </button>
+
+    <p class="text-xs text-gray-500 text-center mt-6">
+      Imagination Inventors Internal Access
+    </p>
+  </div>
+
+  <script>
+    if (window.netlifyIdentity) {
+      netlifyIdentity.on('login', user => {
+        window.location.href = '/dashboard.html'
+      })
+    }
+  </script>
+
+</body>
+</html>
