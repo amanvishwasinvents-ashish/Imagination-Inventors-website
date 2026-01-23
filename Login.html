@@ -1,64 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/png" href="assets/favicon.png">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab OS Login · Imagination Inventors</title>
 
-  <!-- SEO -->
-  <title>Team Login | Imagination Inventors</title>
-  <meta name="robots" content="noindex, nofollow" />
-
-  <!-- Tailwind -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            bg: '#0b0f14',
-            panel: '#111827',
-            accent: '#38bdf8'
-          }
-        }
-      }
-    }
-  </script>
 
-  <!-- Netlify Identity -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
 </head>
+<body class="bg-neutral-950 text-neutral-200 flex items-center justify-center min-h-screen">
 
-<body class="dark bg-bg text-gray-200 font-sans min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-sm border border-neutral-800 rounded-xl p-6">
 
-  <div class="bg-panel border border-gray-800 rounded-2xl p-8 w-full max-w-md shadow-xl">
-    <h1 class="text-3xl font-extrabold text-center mb-6">Team Login</h1>
+    <h1 class="text-xl font-semibold mb-1">Lab OS</h1>
+    <p class="text-sm text-neutral-400 mb-6">Internal access · Imagination Inventors</p>
 
-    <p class="text-gray-400 text-center mb-8">
-      Authorized members only.
-    </p>
+    <form id="loginForm" class="space-y-4">
 
-    <button
-      onclick="netlifyIdentity.open()"
-      class="w-full py-3 rounded-xl bg-accent text-black font-semibold hover:scale-105 transition"
-    >
-      Login
-    </button>
+      <div>
+        <label class="block text-xs text-neutral-400 mb-1">Username</label>
+        <input
+          type="text"
+          id="username"
+          required
+          class="w-full px-3 py-2 rounded-md bg-neutral-900 border border-neutral-700 focus:outline-none focus:border-emerald-400"
+        />
+      </div>
 
-    <p class="text-xs text-gray-500 text-center mt-6">
-      Imagination Inventors Internal Access
-    </p>
+      <div>
+        <label class="block text-xs text-neutral-400 mb-1">Password</label>
+        <input
+          type="password"
+          id="password"
+          required
+          class="w-full px-3 py-2 rounded-md bg-neutral-900 border border-neutral-700 focus:outline-none focus:border-emerald-400"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full mt-2 px-4 py-2 rounded-md bg-emerald-400 text-black font-semibold hover:bg-emerald-300 transition"
+      >
+        Enter Lab OS
+      </button>
+
+      <p id="error" class="hidden text-sm text-red-400 mt-2"></p>
+
+    </form>
+
   </div>
 
-  <script>
-    if (window.netlifyIdentity) {
-      netlifyIdentity.on('login', user => {
-        window.location.href = '/dashboard.html'
-      })
+<script>
+const API = "https://lab-os-backend.onrender.com"; // backend URL
+
+const form = document.getElementById("loginForm");
+const errorBox = document.getElementById("error");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  errorBox.classList.add("hidden");
+
+  try {
+    const res = await fetch(`${API}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      errorBox.textContent = data.error || "Login failed";
+      errorBox.classList.remove("hidden");
+      return;
     }
-  </script>
+
+    localStorage.setItem("lab_token", data.token);
+    localStorage.setItem("lab_role", data.role);
+    localStorage.setItem("lab_user", username);
+
+    window.location.href = "dashboard.html";
+
+  } catch (err) {
+    errorBox.textContent = "Cannot reach Lab OS backend";
+    errorBox.classList.remove("hidden");
+  }
+});
+</script>
 
 </body>
 </html>

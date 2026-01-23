@@ -1,83 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/png" href="assets/favicon.png">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Dashboard | Imagination Inventors</title>
-  <meta name="robots" content="noindex, nofollow" />
-
-  <!-- Tailwind -->
+  <title>Lab OS · Imagination Inventors</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            bg: '#0b0f14',
-            panel: '#111827',
-            accent: '#38bdf8'
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Netlify Identity -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
+<body class="bg-neutral-950 text-neutral-200">
 
-<body class="dark bg-bg text-gray-200 font-sans min-h-screen">
-
-  <!-- Auth Guard -->
-  <script>
-    if (window.netlifyIdentity) {
-      netlifyIdentity.on('init', user => {
-        if (!user) {
-          window.location.href = '/login.html'
-        }
-      })
-    }
-  </script>
-
-  <!-- Navbar -->
-  <nav class="bg-bg border-b border-gray-800 px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-accent">Imagination Inventors</h1>
-    <button
-      onclick="netlifyIdentity.logout()"
-      class="text-sm px-4 py-2 border border-gray-700 rounded-lg hover:border-accent transition"
-    >
-      Logout
-    </button>
-  </nav>
-
-  <!-- Dashboard Content -->
-  <main class="px-6 py-12 max-w-6xl mx-auto">
-    <h2 class="text-4xl font-extrabold mb-6">Team Dashboard</h2>
-    <p class="text-gray-400 mb-10">
-      Internal access · Authorized members only
-    </p>
-
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="bg-panel border border-gray-800 rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-2">🧠 Projects</h3>
-        <p class="text-gray-400">Internal notes, links, and progress tracking.</p>
+  <!-- Top Bar -->
+  <header class="border-b border-neutral-800">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-lg font-semibold">Imagination Inventors · Lab OS</h1>
+        <p class="text-xs text-neutral-400">Internal workspace</p>
       </div>
-
-      <div class="bg-panel border border-gray-800 rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-2">🤖 Robotics</h3>
-        <p class="text-gray-400">Hardware status, experiments, and future ideas.</p>
-      </div>
-
-      <div class="bg-panel border border-gray-800 rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-2">⚙️ System</h3>
-        <p class="text-gray-400">Admin-only tools and configuration (coming soon).</p>
+      <div class="flex items-center gap-4">
+        <span id="userLabel" class="text-sm text-neutral-400"></span>
+        <button onclick="logout()" class="text-sm px-3 py-1.5 rounded-md border border-neutral-700 hover:border-red-500">Logout</button>
       </div>
     </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-12 gap-8">
+
+    <!-- Sidebar -->
+    <aside class="col-span-3 border-r border-neutral-800 pr-6">
+      <h2 class="text-sm font-semibold text-neutral-400 mb-3">Projects</h2>
+      <ul id="projectsList" class="space-y-2 text-sm"></ul>
+      <button id="addProjectBtn" class="hidden mt-4 w-full text-xs px-3 py-2 rounded-md border border-neutral-700 hover:border-emerald-400">+ Add Project</button>
+    </aside>
+
+    <!-- Content -->
+    <section class="col-span-9">
+
+      <!-- Mission -->
+      <div class="mb-8">
+        <h2 class="text-sm font-semibold text-neutral-400 mb-2">Mission</h2>
+        <p class="text-sm leading-relaxed text-neutral-300">
+          Building an industry-shaking interactive AI system combining robotics,
+          perception, and game-like mechanics to redefine human–machine interaction.
+        </p>
+      </div>
+
+      <!-- Work Units -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-neutral-400">Work Units</h2>
+          <button id="addWorkBtn" class="hidden text-xs px-3 py-1.5 rounded-md border border-neutral-700 hover:border-emerald-400">+ Add Work Unit</button>
+        </div>
+        <div id="workUnits" class="space-y-3"></div>
+      </div>
+
+    </section>
   </main>
 
+<script>
+const API = "https://lab-os-backend.onrender.com"; // changed
+const token = localStorage.getItem("lab_token");
+const role = localStorage.getItem("lab_role");
+const user = localStorage.getItem("lab_user");
+
+if (!token) location.href = "login.html";
+
+document.getElementById("userLabel").innerText = `${user} · ${role}`;
+if (role === "admin") {
+  document.getElementById("addProjectBtn").classList.remove("hidden");
+  document.getElementById("addWorkBtn").classList.remove("hidden");
+}
+
+function authHeaders() {
+  return { Authorization: token, "Content-Type": "application/json" };
+}
+
+function logout() {
+  localStorage.clear();
+  location.href = "login.html";
+}
+
+// -------- Projects --------
+async function loadProjects() {
+  const res = await fetch(`${API}/projects`, { headers: authHeaders() });
+  const data = await res.json();
+  const list = document.getElementById("projectsList");
+  list.innerHTML = "";
+  data.forEach(p => {
+    const li = document.createElement("li");
+    li.className = "cursor-pointer px-3 py-2 rounded-md hover:bg-neutral-900";
+    li.innerText = p.name;
+    li.onclick = () => loadWorkUnits(p.id);
+    list.appendChild(li);
+  });
+}
+
+// -------- Work Units --------
+async function loadWorkUnits(projectId) {
+  const res = await fetch(`${API}/work-units`, { headers: authHeaders() });
+  const data = await res.json();
+  const container = document.getElementById("workUnits");
+  container.innerHTML = "";
+
+  data.filter(w => w.project_id === projectId).forEach(w => {
+    const card = document.createElement("div");
+    card.className = `p-4 rounded-lg border ${w.owner === user ? "border-emerald-500" : "border-neutral-800"}`;
+
+    card.innerHTML = `
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 class="font-medium">${w.title}</h3>
+          <p class="text-xs text-neutral-400">Owner: ${w.owner}</p>
+        </div>
+        <span class="text-xs px-2 py-1 rounded-full border border-neutral-700">${w.status}</span>
+      </div>
+    `;
+
+    if (w.owner === user) {
+      card.onclick = () => updateStatus(w.id);
+      card.classList.add("cursor-pointer", "hover:bg-neutral-900");
+    }
+
+    container.appendChild(card);
+  });
+}
+
+async function updateStatus(id) {
+  const status = prompt("Update status: idea / active / blocked / completed");
+  if (!status) return;
+  await fetch(`${API}/work-units/${id}/status`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ status })
+  });
+  loadProjects();
+}
+
+loadProjects();
+</script>
 </body>
 </html>
