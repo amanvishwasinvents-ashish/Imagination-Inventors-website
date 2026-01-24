@@ -5,137 +5,129 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lab OS · Imagination Inventors</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'JetBrains Mono', monospace; }
+  </style>
 </head>
-<body class="bg-neutral-950 text-neutral-200">
+<body class="bg-black text-green-400">
 
-  <!-- Top Bar -->
-  <header class="border-b border-neutral-800">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div>
-        <h1 class="text-lg font-semibold">Imagination Inventors · Lab OS</h1>
-        <p class="text-xs text-neutral-400">Internal workspace</p>
-      </div>
-      <div class="flex items-center gap-4">
-        <span id="userLabel" class="text-sm text-neutral-400"></span>
-        <button onclick="logout()" class="text-sm px-3 py-1.5 rounded-md border border-neutral-700 hover:border-red-500">Logout</button>
-      </div>
+<header class="border-b border-green-800">
+  <div class="px-4 py-3 flex justify-between items-center">
+    <div>
+      <h1 class="text-sm font-bold">LAB_OS //</h1>
+      <p class="text-xs text-green-600">imagination_inventors</p>
     </div>
-  </header>
+    <div class="text-xs" id="userLabel"></div>
+  </div>
+</header>
 
-  <!-- Main -->
-  <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-12 gap-8">
+<main class="px-4 py-4 space-y-6">
 
-    <!-- Sidebar -->
-    <aside class="col-span-3 border-r border-neutral-800 pr-6">
-      <h2 class="text-sm font-semibold text-neutral-400 mb-3">Projects</h2>
-      <ul id="projectsList" class="space-y-2 text-sm"></ul>
-      <button id="addProjectBtn" class="hidden mt-4 w-full text-xs px-3 py-2 rounded-md border border-neutral-700 hover:border-emerald-400">+ Add Project</button>
-    </aside>
+  <div>
+    <label class="text-xs text-green-600">ACTIVE_PROJECT</label>
+    <select id="projectSelect" class="w-full mt-1 px-3 py-2 bg-black border border-green-700 text-green-400"></select>
+  </div>
 
-    <!-- Content -->
-    <section class="col-span-9">
+  <div id="projectCard" class="border border-green-800 p-4 space-y-3"></div>
 
-      <!-- Mission -->
-      <div class="mb-8">
-        <h2 class="text-sm font-semibold text-neutral-400 mb-2">Mission</h2>
-        <p class="text-sm leading-relaxed text-neutral-300">
-          Building an industry-shaking interactive AI system combining robotics,
-          perception, and game-like mechanics to redefine human–machine interaction.
-        </p>
-      </div>
+  <div>
+    <h2 class="text-xs text-green-600 mb-2">WORK_UNITS</h2>
+    <div id="workUnits" class="space-y-3"></div>
+  </div>
 
-      <!-- Work Units -->
-      <div>
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold text-neutral-400">Work Units</h2>
-          <button id="addWorkBtn" class="hidden text-xs px-3 py-1.5 rounded-md border border-neutral-700 hover:border-emerald-400">+ Add Work Unit</button>
-        </div>
-        <div id="workUnits" class="space-y-3"></div>
-      </div>
+  <div class="border-t border-green-800 pt-4">
+    <h2 class="text-xs text-green-600 mb-2">WEEKLY_SIGNAL</h2>
+    <div id="weekly"></div>
+  </div>
 
-    </section>
-  </main>
+</main>
 
 <script>
-const API = "https://lab-os-backend.onrender.com"; // changed
+const API = "https://lab-os-backend.onrender.com";
 const token = localStorage.getItem("lab_token");
 const role = localStorage.getItem("lab_role");
 const user = localStorage.getItem("lab_user");
-
 if (!token) location.href = "login.html";
+document.getElementById("userLabel").innerText = `${user} [${role}]`;
 
-document.getElementById("userLabel").innerText = `${user} · ${role}`;
-if (role === "admin") {
-  document.getElementById("addProjectBtn").classList.remove("hidden");
-  document.getElementById("addWorkBtn").classList.remove("hidden");
+function headers() { return { Authorization: token, "Content-Type": "application/json" }; }
+
+let projects=[], workUnits=[];
+
+async function loadAll(){
+  projects = await fetch(`${API}/projects`,{headers:headers()}).then(r=>r.json());
+  workUnits = await fetch(`${API}/work-units`,{headers:headers()}).then(r=>r.json());
+
+  const sel=document.getElementById('projectSelect'); sel.innerHTML='';
+  projects.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;sel.appendChild(o);});
+  sel.onchange=()=>renderProject(projects.find(p=>p.id==sel.value));
+  if(projects[0]) renderProject(projects[0]);
+  loadWeekly();
 }
 
-function authHeaders() {
-  return { Authorization: token, "Content-Type": "application/json" };
+function renderProject(p){
+  const c=document.getElementById('projectCard');
+  if(role==='admin'){
+    c.innerHTML=`<input id='pn' value='${p.name}' class='w-full bg-black border border-green-700 p-2'>
+    <textarea id='pd' class='w-full bg-black border border-green-700 p-2'>${p.description}</textarea>
+    <button onclick='saveProject(${p.id})' class='w-full bg-green-600 text-black py-1'>SAVE_PROJECT</button>`;
+  } else {
+    c.innerHTML=`<h2>${p.name}</h2><p class='text-xs text-green-600'>${p.description}</p>`;
+  }
+  renderWork(p.id);
 }
 
-function logout() {
-  localStorage.clear();
-  location.href = "login.html";
+async function saveProject(id){
+  await fetch(`${API}/projects/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({name:pn.value,description:pd.value})});
+  loadAll();
 }
 
-// -------- Projects --------
-async function loadProjects() {
-  const res = await fetch(`${API}/projects`, { headers: authHeaders() });
-  const data = await res.json();
-  const list = document.getElementById("projectsList");
-  list.innerHTML = "";
-  data.forEach(p => {
-    const li = document.createElement("li");
-    li.className = "cursor-pointer px-3 py-2 rounded-md hover:bg-neutral-900";
-    li.innerText = p.name;
-    li.onclick = () => loadWorkUnits(p.id);
-    list.appendChild(li);
-  });
-}
-
-// -------- Work Units --------
-async function loadWorkUnits(projectId) {
-  const res = await fetch(`${API}/work-units`, { headers: authHeaders() });
-  const data = await res.json();
-  const container = document.getElementById("workUnits");
-  container.innerHTML = "";
-
-  data.filter(w => w.project_id === projectId).forEach(w => {
-    const card = document.createElement("div");
-    card.className = `p-4 rounded-lg border ${w.owner === user ? "border-emerald-500" : "border-neutral-800"}`;
-
-    card.innerHTML = `
-      <div class="flex justify-between items-center">
-        <div>
-          <h3 class="font-medium">${w.title}</h3>
-          <p class="text-xs text-neutral-400">Owner: ${w.owner}</p>
-        </div>
-        <span class="text-xs px-2 py-1 rounded-full border border-neutral-700">${w.status}</span>
-      </div>
-    `;
-
-    if (w.owner === user) {
-      card.onclick = () => updateStatus(w.id);
-      card.classList.add("cursor-pointer", "hover:bg-neutral-900");
+function renderWork(pid){
+  const c=document.getElementById('workUnits'); c.innerHTML='';
+  workUnits.filter(w=>w.project_id===pid).forEach(w=>{
+    const d=document.createElement('div');
+    d.className=`border p-3 ${w.owner===user?'border-green-500':'border-green-800'}`;
+    if(role==='admin'){
+      d.innerHTML=`<input value='${w.title}' class='w-full bg-black border border-green-700'>
+      <textarea class='w-full bg-black border border-green-700'>${w.description}</textarea>
+      <input value='${w.owner}' class='w-full bg-black border border-green-700'>
+      <button onclick='saveWork(${w.id},this.parentElement)' class='w-full bg-green-600 text-black'>SAVE_UNIT</button>`;
+    } else {
+      d.innerHTML=`<div>${w.title}</div><div class='text-xs'>STATUS: ${w.status}</div>`;
     }
-
-    container.appendChild(card);
+    c.appendChild(d);
   });
 }
 
-async function updateStatus(id) {
-  const status = prompt("Update status: idea / active / blocked / completed");
-  if (!status) return;
-  await fetch(`${API}/work-units/${id}/status`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ status })
-  });
-  loadProjects();
+async function saveWork(id,el){
+  const i=el.querySelectorAll('input,textarea');
+  await fetch(`${API}/work-units/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({title:i[0].value,description:i[1].value,owner:i[2].value})});
+  loadAll();
 }
 
-loadProjects();
+async function loadWeekly(){
+  const box=document.getElementById('weekly');
+  const res=await fetch(`${API}/weekly-signals`,{headers:headers()});
+  const data=await res.json();
+
+  if(role!=='admin'){
+    const submitted=data.find(s=>s.user===user);
+    if(submitted){box.innerHTML=`<pre>${submitted.moved}\n${submitted.next}\n${submitted.blockers}</pre>`;return;}
+    box.innerHTML=`<textarea id='wm' class='w-full bg-black border border-green-700' placeholder='WHAT_MOVED'></textarea>
+    <textarea id='wn' class='w-full bg-black border border-green-700' placeholder='WHAT_NEXT'></textarea>
+    <textarea id='wb' class='w-full bg-black border border-green-700' placeholder='BLOCKERS'></textarea>
+    <button onclick='submitWeekly()' class='w-full bg-green-600 text-black'>SUBMIT_SIGNAL</button>`;
+  } else {
+    box.innerHTML=data.map(s=>`<pre>[${s.user}]\n${s.moved}\n${s.next}\n${s.blockers}</pre>`).join('');
+  }
+}
+
+async function submitWeekly(){
+  await fetch(`${API}/weekly-signals`,{method:'POST',headers:headers(),body:JSON.stringify({moved:wm.value,next:wn.value,blockers:wb.value})});
+  loadWeekly();
+}
+
+loadAll();
 </script>
 </body>
 </html>
