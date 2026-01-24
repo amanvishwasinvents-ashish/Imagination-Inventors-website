@@ -6,40 +6,57 @@
   <title>Lab OS · Imagination Inventors</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: 'JetBrains Mono', monospace; }
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
   </style>
 </head>
-<body class="bg-black text-green-400">
+<body class="bg-neutral-950 text-neutral-200">
 
-<header class="border-b border-green-800">
-  <div class="px-4 py-3 flex justify-between items-center">
+<!-- Top Bar -->
+<header class="border-b border-neutral-800 bg-neutral-900 sticky top-0 z-10">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
     <div>
-      <h1 class="text-sm font-bold">LAB_OS //</h1>
-      <p class="text-xs text-green-600">imagination_inventors</p>
+      <h1 class="text-sm font-semibold">Lab OS</h1>
+      <p class="text-xs text-neutral-400">Imagination Inventors</p>
     </div>
-    <div class="text-xs" id="userLabel"></div>
+    <div id="userLabel" class="text-xs text-neutral-400"></div>
   </div>
 </header>
 
-<main class="px-4 py-4 space-y-6">
+<!-- Main -->
+<main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
 
-  <div>
-    <label class="text-xs text-green-600">ACTIVE_PROJECT</label>
-    <select id="projectSelect" class="w-full mt-1 px-3 py-2 bg-black border border-green-700 text-green-400"></select>
-  </div>
+  <!-- Sidebar -->
+  <aside class="md:col-span-1 space-y-4">
+    <div>
+      <label class="text-xs text-neutral-400">Project</label>
+      <select id="projectSelect" class="w-full mt-1 px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-md focus:outline-none focus:border-blue-500"></select>
+    </div>
 
-  <div id="projectCard" class="border border-green-800 p-4 space-y-3"></div>
+    <div class="text-xs text-neutral-500">
+      <p>Internal Lab Workspace</p>
+      <p class="mt-1">Private · Invite-only</p>
+    </div>
+  </aside>
 
-  <div>
-    <h2 class="text-xs text-green-600 mb-2">WORK_UNITS</h2>
-    <div id="workUnits" class="space-y-3"></div>
-  </div>
+  <!-- Content -->
+  <section class="md:col-span-3 space-y-8">
 
-  <div class="border-t border-green-800 pt-4">
-    <h2 class="text-xs text-green-600 mb-2">WEEKLY_SIGNAL</h2>
-    <div id="weekly"></div>
-  </div>
+    <!-- Project -->
+    <div id="projectCard" class="border border-neutral-800 rounded-lg p-4 space-y-3"></div>
 
+    <!-- Work Units -->
+    <div>
+      <h2 class="text-sm font-semibold text-neutral-300 mb-3">Work Units</h2>
+      <div id="workUnits" class="space-y-3"></div>
+    </div>
+
+    <!-- Weekly Signals -->
+    <div class="border-t border-neutral-800 pt-6">
+      <h2 class="text-sm font-semibold text-neutral-300 mb-3">Weekly Signals</h2>
+      <div id="weekly"></div>
+    </div>
+
+  </section>
 </main>
 
 <script>
@@ -48,9 +65,10 @@ const token = localStorage.getItem("lab_token");
 const role = localStorage.getItem("lab_role");
 const user = localStorage.getItem("lab_user");
 if (!token) location.href = "login.html";
-document.getElementById("userLabel").innerText = `${user} [${role}]`;
 
-function headers() { return { Authorization: token, "Content-Type": "application/json" }; }
+document.getElementById("userLabel").innerText = `${user} · ${role}`;
+
+function headers(){ return { Authorization: token, "Content-Type": "application/json" }; }
 
 let projects=[], workUnits=[];
 
@@ -59,7 +77,8 @@ async function loadAll(){
   workUnits = await fetch(`${API}/work-units`,{headers:headers()}).then(r=>r.json());
 
   const sel=document.getElementById('projectSelect'); sel.innerHTML='';
-  projects.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;sel.appendChild(o);});
+  projects.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; sel.appendChild(o); });
+
   sel.onchange=()=>renderProject(projects.find(p=>p.id==sel.value));
   if(projects[0]) renderProject(projects[0]);
   loadWeekly();
@@ -68,11 +87,13 @@ async function loadAll(){
 function renderProject(p){
   const c=document.getElementById('projectCard');
   if(role==='admin'){
-    c.innerHTML=`<input id='pn' value='${p.name}' class='w-full bg-black border border-green-700 p-2'>
-    <textarea id='pd' class='w-full bg-black border border-green-700 p-2'>${p.description}</textarea>
-    <button onclick='saveProject(${p.id})' class='w-full bg-green-600 text-black py-1'>SAVE_PROJECT</button>`;
+    c.innerHTML=`
+      <input id="pn" value="${p.name}" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500" />
+      <textarea id="pd" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500">${p.description}</textarea>
+      <button onclick="saveProject(${p.id})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-sm">Save Project</button>
+    `;
   } else {
-    c.innerHTML=`<h2>${p.name}</h2><p class='text-xs text-green-600'>${p.description}</p>`;
+    c.innerHTML=`<h2 class="font-medium">${p.name}</h2><p class="text-sm text-neutral-400">${p.description}</p>`;
   }
   renderWork(p.id);
 }
@@ -86,14 +107,17 @@ function renderWork(pid){
   const c=document.getElementById('workUnits'); c.innerHTML='';
   workUnits.filter(w=>w.project_id===pid).forEach(w=>{
     const d=document.createElement('div');
-    d.className=`border p-3 ${w.owner===user?'border-green-500':'border-green-800'}`;
+    d.className=`border rounded-md p-3 ${w.owner===user?'border-blue-500':'border-neutral-800'}`;
+
     if(role==='admin'){
-      d.innerHTML=`<input value='${w.title}' class='w-full bg-black border border-green-700'>
-      <textarea class='w-full bg-black border border-green-700'>${w.description}</textarea>
-      <input value='${w.owner}' class='w-full bg-black border border-green-700'>
-      <button onclick='saveWork(${w.id},this.parentElement)' class='w-full bg-green-600 text-black'>SAVE_UNIT</button>`;
+      d.innerHTML=`
+        <input value="${w.title}" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500" />
+        <textarea class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500">${w.description}</textarea>
+        <input value="${w.owner}" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500" />
+        <button onclick="saveWork(${w.id},this.parentElement)" class="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-xs">Save</button>
+      `;
     } else {
-      d.innerHTML=`<div>${w.title}</div><div class='text-xs'>STATUS: ${w.status}</div>`;
+      d.innerHTML=`<div class="font-medium">${w.title}</div><div class="text-xs text-neutral-400">Owner: ${w.owner}</div><div class="text-xs">Status: ${w.status}</div>`;
     }
     c.appendChild(d);
   });
@@ -112,13 +136,15 @@ async function loadWeekly(){
 
   if(role!=='admin'){
     const submitted=data.find(s=>s.user===user);
-    if(submitted){box.innerHTML=`<pre>${submitted.moved}\n${submitted.next}\n${submitted.blockers}</pre>`;return;}
-    box.innerHTML=`<textarea id='wm' class='w-full bg-black border border-green-700' placeholder='WHAT_MOVED'></textarea>
-    <textarea id='wn' class='w-full bg-black border border-green-700' placeholder='WHAT_NEXT'></textarea>
-    <textarea id='wb' class='w-full bg-black border border-green-700' placeholder='BLOCKERS'></textarea>
-    <button onclick='submitWeekly()' class='w-full bg-green-600 text-black'>SUBMIT_SIGNAL</button>`;
+    if(submitted){ box.innerHTML=`<pre class="text-xs bg-neutral-900 border border-neutral-800 p-3 rounded-md">${submitted.moved}\n\n${submitted.next}\n\n${submitted.blockers}</pre>`; return; }
+    box.innerHTML=`
+      <textarea id="wm" class="w-full bg-neutral-900 border border-neutral-700 p-2 rounded-md text-neutral-200 caret-white" placeholder="What moved?"></textarea>
+      <textarea id="wn" class="w-full bg-neutral-900 border border-neutral-700 p-2 rounded-md text-neutral-200 caret-white" placeholder="What's next?"></textarea>
+      <textarea id="wb" class="w-full bg-neutral-900 border border-neutral-700 p-2 rounded-md text-neutral-200 caret-white" placeholder="Blockers"></textarea>
+      <button onclick="submitWeekly()" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-sm">Submit Weekly Signal</button>
+    `;
   } else {
-    box.innerHTML=data.map(s=>`<pre>[${s.user}]\n${s.moved}\n${s.next}\n${s.blockers}</pre>`).join('');
+    box.innerHTML=data.map(s=>`<pre class="text-xs bg-neutral-900 border border-neutral-800 p-3 rounded-md">[${s.user}]\n${s.moved}\n${s.next}\n${s.blockers}</pre>`).join('');
   }
 }
 
