@@ -43,14 +43,32 @@
     <!-- PROJECTS -->
     <section id="projects" class="tab hidden">
       <h2 class="text-lg mb-4">Projects</h2>
+
+      <!-- Create Project (Admin) -->
       <div id="createProject" class="mb-6 hidden">
+        <h3 class="text-sm mb-2">Create New Project</h3>
         <input id="newProjectName" placeholder="Project name" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
         <textarea id="newProjectDesc" placeholder="Project description" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
         <button onclick="createProject()" class="px-3 py-1 bg-blue-600">Create Project</button>
       </div>
+
+      <!-- Project Selector -->
       <select id="projectSelect" class="mb-4 bg-neutral-900 border border-neutral-700 px-3 py-2"></select>
-      <div id="projectCard"></div>
-      <div id="workUnits" class="mt-6 space-y-3"></div>
+
+      <!-- Project Details -->
+      <div id="projectCard" class="mb-6"></div>
+
+      <!-- Add Work Unit (Admin) -->
+      <div id="addWorkUnit" class="mb-6 hidden">
+        <h3 class="text-sm mb-2">Add Work Unit</h3>
+        <input id="wuTitle" placeholder="Work unit title" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <textarea id="wuDesc" placeholder="Description" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
+        <input id="wuOwner" placeholder="Owner username" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <button onclick="createWorkUnit()" class="px-3 py-1 bg-blue-600">Create Work Unit</button>
+      </div>
+
+      <!-- Work Units List -->
+      <div id="workUnits" class="space-y-3"></div>
     </section>
 
     <!-- UPDATES -->
