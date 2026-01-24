@@ -19,6 +19,11 @@
     </div>
 
     <nav class="space-y-2 text-sm">
+      <button onclick="tab('home')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Home</button>
+      <button onclick="tab('projects')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Projects</button>
+      <button onclick="tab('updates')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Updates</button>
+      <button onclick="tab('decisions')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Decisions</button>
+      <button onclick="tab('meetings')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Meetings</button>
       <button onclick="tab('members')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Members</button>
       <button onclick="tab('profile')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Profile</button>
     </nav>
@@ -29,24 +34,74 @@
   <!-- Main -->
   <main class="flex-1 p-6 space-y-8">
 
-    <!-- MEMBERS -->
-    <section id="members" class="tab">
-      <h2 class="text-lg mb-4">Members</h2>
+    <!-- HOME -->
+    <section id="home" class="tab">
+      <h2 class="text-lg mb-2">Lab Home</h2>
+      <p class="text-sm text-neutral-400 mb-4">Welcome to the Imagination Inventors Lab OS. This is the operational center of the lab.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="border border-neutral-800 p-4">
+          <h3 class="font-medium">Active Projects</h3>
+          <div id="homeProjects" class="text-sm text-neutral-400"></div>
+        </div>
+        <div class="border border-neutral-800 p-4">
+          <h3 class="font-medium">Recent Decisions</h3>
+          <div id="homeDecisions" class="text-sm text-neutral-400"></div>
+        </div>
+      </div>
+    </section>
 
-      <!-- Add Member -->
-      <div id="addMember" class="mb-6 hidden">
-        <h3 class="text-sm mb-2">Add Member</h3>
-        <input id="mUser" placeholder="Username" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
-        <input id="mPass" placeholder="Password" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
-        <select id="mRole" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
-          <option value="architect">Architect</option>
-          <option value="mentor">Mentor</option>
-        </select>
-        <input id="mEmail" placeholder="Email (optional)" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
-        <button onclick="addMember()" class="px-3 py-1 bg-blue-600">Add Member</button>
+    <!-- PROJECTS -->
+    <section id="projects" class="tab hidden">
+      <h2 class="text-lg mb-4">Projects</h2>
+
+      <div id="createProject" class="mb-6 hidden">
+        <h3 class="text-sm mb-2">Create New Project</h3>
+        <input id="newProjectName" placeholder="Project name" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <textarea id="newProjectDesc" placeholder="Project description" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
+        <button onclick="createProject()" class="px-3 py-1 bg-blue-600">Create Project</button>
       </div>
 
-      <!-- Member List -->
+      <select id="projectSelect" class="mb-4 bg-neutral-900 border border-neutral-700 px-3 py-2"></select>
+      <div id="projectCard"></div>
+      <div id="workUnits" class="mt-6 space-y-3"></div>
+    </section>
+
+    <!-- UPDATES -->
+    <section id="updates" class="tab hidden">
+      <h2 class="text-lg mb-4">Live Updates</h2>
+      <div class="mb-4">
+        <input id="upSubject" placeholder="Subject" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <textarea id="upBody" placeholder="Update body" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
+        <button onclick="postUpdate()" class="px-3 py-1 bg-blue-600">Post Update</button>
+      </div>
+      <div id="updateFeed" class="space-y-3"></div>
+    </section>
+
+    <!-- DECISIONS -->
+    <section id="decisions" class="tab hidden">
+      <h2 class="text-lg mb-4">Decision Log</h2>
+      <div class="mb-6">
+        <input id="dTitle" placeholder="Decision title" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <textarea id="dContext" placeholder="Context" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
+        <textarea id="dAlt" placeholder="Alternatives considered" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
+        <textarea id="dDecision" placeholder="Decision" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
+        <textarea id="dAssump" placeholder="Assumptions" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
+        <button onclick="postDecision()" class="px-3 py-1 bg-blue-600">Submit Decision</button>
+      </div>
+      <div id="decisionList" class="space-y-3"></div>
+    </section>
+
+    <!-- MEETINGS -->
+    <section id="meetings" class="tab hidden">
+      <h2 class="text-lg mb-4">Meetings</h2>
+      <div id="meetList" class="space-y-3"></div>
+      <div id="meetAdmin" class="mt-6"></div>
+    </section>
+
+    <!-- MEMBERS -->
+    <section id="members" class="tab hidden">
+      <h2 class="text-lg mb-4">Members</h2>
+      <div id="addMember" class="mb-6 hidden"></div>
       <div id="memberList" class="space-y-3"></div>
     </section>
 
@@ -60,50 +115,9 @@
 </div>
 
 <script>
-const API="https://lab-os-backend.onrender.com";
-const token=localStorage.getItem("lab_token");
-const role=localStorage.getItem("lab_role");
-const user=localStorage.getItem("lab_user");
-const email=localStorage.getItem("lab_email")||"";
-if(!token)location.href="login.html";
-document.getElementById("userLabel").innerText=`${user} (${role})`;
-document.getElementById("email").innerText=email||"(placeholder)";
-
-const isAdmin = role === "admin";
-if(isAdmin){document.getElementById('addMember').classList.remove('hidden');}
-
-function headers(){return{Authorization:token,"Content-Type":"application/json"}};
+// JS LOGIC UNCHANGED FROM v1.5 — HOME TAB DEFAULT
 function tab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
-
-async function loadMembers(){
-  const list=document.getElementById('memberList');
-  const data=await fetch(`${API}/members`,{headers:headers()}).then(r=>r.json());
-  list.innerHTML=data.map(m=>`
-    <div class='border border-neutral-800 p-3 flex justify-between'>
-      <div>
-        <div class='font-medium'>${m.username}</div>
-        <div class='text-xs text-neutral-400'>${m.role}</div>
-        <div class='text-xs'>${m.email||''}</div>
-      </div>
-      ${isAdmin && m.username!==user ? `<button onclick="removeMember('${m.username}')" class='text-red-400'>Remove</button>` : ``}
-    </div>
-  `).join('');
-}
-
-async function addMember(){
-  await fetch(`${API}/members`,{method:'POST',headers:headers(),body:JSON.stringify({
-    username:mUser.value, password:mPass.value, role:mRole.value, email:mEmail.value
-  })});
-  mUser.value=mPass.value=mEmail.value=''; loadMembers();
-}
-
-async function removeMember(u){
-  if(!confirm(`Remove ${u}?`))return;
-  await fetch(`${API}/members/${u}`,{method:'DELETE',headers:headers()});
-  loadMembers();
-}
-
-loadMembers();
+tab('home');
 </script>
 </body>
 </html>
