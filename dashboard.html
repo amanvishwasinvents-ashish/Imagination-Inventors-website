@@ -19,9 +19,7 @@
     </div>
 
     <nav class="space-y-2 text-sm">
-      <button onclick="tab('projects')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Projects</button>
-      <button onclick="tab('updates')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Updates</button>
-      <button onclick="tab('meetings')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Meetings</button>
+      <button onclick="tab('members')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Members</button>
       <button onclick="tab('profile')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Profile</button>
     </nav>
 
@@ -31,39 +29,25 @@
   <!-- Main -->
   <main class="flex-1 p-6 space-y-8">
 
-    <!-- PROJECTS -->
-    <section id="projects" class="tab">
-      <h2 class="text-lg mb-4">Projects</h2>
+    <!-- MEMBERS -->
+    <section id="members" class="tab">
+      <h2 class="text-lg mb-4">Members</h2>
 
-      <!-- Create Project (Admin) -->
-      <div id="createProject" class="mb-6 hidden">
-        <h3 class="text-sm mb-2">Create New Project</h3>
-        <input id="newProjectName" placeholder="Project name" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
-        <textarea id="newProjectDesc" placeholder="Project description" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
-        <button onclick="createProject()" class="px-3 py-1 bg-blue-600">Create Project</button>
+      <!-- Add Member -->
+      <div id="addMember" class="mb-6 hidden">
+        <h3 class="text-sm mb-2">Add Member</h3>
+        <input id="mUser" placeholder="Username" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <input id="mPass" placeholder="Password" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <select id="mRole" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+          <option value="architect">Architect</option>
+          <option value="mentor">Mentor</option>
+        </select>
+        <input id="mEmail" placeholder="Email (optional)" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+        <button onclick="addMember()" class="px-3 py-1 bg-blue-600">Add Member</button>
       </div>
 
-      <select id="projectSelect" class="mb-4 bg-neutral-900 border border-neutral-700 px-3 py-2"></select>
-      <div id="projectCard"></div>
-      <div id="workUnits" class="mt-6 space-y-3"></div>
-    </section>
-
-    <!-- UPDATES -->
-    <section id="updates" class="tab hidden">
-      <h2 class="text-lg mb-4">Live Updates</h2>
-      <div class="mb-4">
-        <input id="upSubject" placeholder="Subject" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
-        <textarea id="upBody" placeholder="Update body" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2"></textarea>
-        <button onclick="postUpdate()" class="px-3 py-1 bg-blue-600">Post Update</button>
-      </div>
-      <div id="updateFeed" class="space-y-3"></div>
-    </section>
-
-    <!-- MEETINGS -->
-    <section id="meetings" class="tab hidden">
-      <h2 class="text-lg mb-4">Meetings</h2>
-      <div id="meetList" class="space-y-3"></div>
-      <div id="meetAdmin" class="mt-6"></div>
+      <!-- Member List -->
+      <div id="memberList" class="space-y-3"></div>
     </section>
 
     <!-- PROFILE -->
@@ -86,77 +70,40 @@ document.getElementById("userLabel").innerText=`${user} (${role})`;
 document.getElementById("email").innerText=email||"(placeholder)";
 
 const isAdmin = role === "admin";
-const isBuilder = role === "admin" || role === "architect" || role === "mentor";
+if(isAdmin){document.getElementById('addMember').classList.remove('hidden');}
 
 function headers(){return{Authorization:token,"Content-Type":"application/json"}};
 function tab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
 
-if(isAdmin){document.getElementById('createProject').classList.remove('hidden');}
-
-let projects=[],workUnits=[];
-
-async function loadProjects(){
-  projects=await fetch(`${API}/projects`,{headers:headers()}).then(r=>r.json());
-  workUnits=await fetch(`${API}/work-units`,{headers:headers()}).then(r=>r.json());
-  const sel=document.getElementById('projectSelect'); sel.innerHTML='';
-  projects.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;sel.appendChild(o)});
-  sel.onchange=()=>renderProject(projects.find(p=>p.id==sel.value));
-  if(projects[0])renderProject(projects[0]);
+async function loadMembers(){
+  const list=document.getElementById('memberList');
+  const data=await fetch(`${API}/members`,{headers:headers()}).then(r=>r.json());
+  list.innerHTML=data.map(m=>`
+    <div class='border border-neutral-800 p-3 flex justify-between'>
+      <div>
+        <div class='font-medium'>${m.username}</div>
+        <div class='text-xs text-neutral-400'>${m.role}</div>
+        <div class='text-xs'>${m.email||''}</div>
+      </div>
+      ${isAdmin && m.username!==user ? `<button onclick="removeMember('${m.username}')" class='text-red-400'>Remove</button>` : ``}
+    </div>
+  `).join('');
 }
 
-async function createProject(){
-  await fetch(`${API}/projects`,{method:'POST',headers:headers(),body:JSON.stringify({name:newProjectName.value,description:newProjectDesc.value})});
-  newProjectName.value=''; newProjectDesc.value='';
-  loadProjects();
+async function addMember(){
+  await fetch(`${API}/members`,{method:'POST',headers:headers(),body:JSON.stringify({
+    username:mUser.value, password:mPass.value, role:mRole.value, email:mEmail.value
+  })});
+  mUser.value=mPass.value=mEmail.value=''; loadMembers();
 }
 
-function renderProject(p){
-  const c=document.getElementById('projectCard');
-  if(isAdmin){
-    c.innerHTML=`<input id='pn' value='${p.name}' class='w-full bg-neutral-900 border border-neutral-700 px-2 py-1'>
-    <textarea id='pd' class='w-full bg-neutral-900 border border-neutral-700 px-2 py-1'>${p.description}</textarea>
-    <button onclick='saveProject(${p.id})' class='mt-2 px-3 py-1 bg-blue-600'>Save</button>`;
-  } else {
-    c.innerHTML=`<h3>${p.name}</h3><p class='text-sm text-neutral-400'>${p.description}</p>`;
-  }
-  renderWork(p.id);
+async function removeMember(u){
+  if(!confirm(`Remove ${u}?`))return;
+  await fetch(`${API}/members/${u}`,{method:'DELETE',headers:headers()});
+  loadMembers();
 }
 
-async function saveProject(id){await fetch(`${API}/projects/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({name:pn.value,description:pd.value})});loadProjects();}
-
-function renderWork(pid){
-  const c=document.getElementById('workUnits'); c.innerHTML='';
-  workUnits.filter(w=>w.project_id===pid).forEach(w=>{
-    const d=document.createElement('div'); d.className='border border-neutral-800 p-3';
-    let html = `<div class='font-medium'>${w.title}</div><div class='text-xs text-neutral-400'>${w.description}</div>`;
-    if(isBuilder && w.owner===user){
-      html += `<select onchange="updateStatus(${w.id},this.value)" class='mt-1 bg-neutral-900 border border-neutral-700'><option>active</option><option>blocked</option><option>done</option></select>`;
-    }
-    if(isAdmin){
-      html += `<input value='${w.title}' class='w-full bg-neutral-900 border border-neutral-700 mt-2'>
-      <textarea class='w-full bg-neutral-900 border border-neutral-700'>${w.description}</textarea>
-      <input value='${w.owner}' class='w-full bg-neutral-900 border border-neutral-700'>
-      <button onclick='saveWork(${w.id},this.parentElement)' class='mt-1 px-2 py-1 bg-blue-600'>Save</button>`;
-    }
-    d.innerHTML = html;
-    c.appendChild(d);
-  })
-}
-
-async function saveWork(id,el){const i=el.querySelectorAll('input,textarea');await fetch(`${API}/work-units/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({title:i[0].value,description:i[1].value,owner:i[2].value})});loadProjects();}
-async function updateStatus(id,status){await fetch(`${API}/work-units/${id}/status`,{method:'POST',headers:headers(),body:JSON.stringify({status})});}
-
-async function loadUpdates(){const feed=document.getElementById('updateFeed');const data=await fetch(`${API}/updates`,{headers:headers()}).then(r=>r.json());feed.innerHTML=data.map(u=>`<div class='border border-neutral-800 p-3'><div class='text-xs'>${u.user}</div><div class='font-medium'>${u.subject}</div><div class='text-sm'>${u.body}</div></div>`).join('');}
-async function postUpdate(){await fetch(`${API}/updates`,{method:'POST',headers:headers(),body:JSON.stringify({subject:upSubject.value,body:upBody.value})});upSubject.value='';upBody.value='';loadUpdates();}
-
-async function loadMeetings(){const list=document.getElementById('meetList');const data=await fetch(`${API}/meetings`,{headers:headers()}).then(r=>r.json());list.innerHTML=data.map(m=>`<div class='border border-neutral-800 p-3'><div>${m.subject}</div><a href='${m.meet_link}' target='_blank' class='text-blue-400 text-sm'>Join Meet</a></div>`).join('');
- if(isAdmin){document.getElementById('meetAdmin').innerHTML=`<input id='msub' placeholder='Subject' class='bg-neutral-900 border border-neutral-700'>
- <input id='mlink' placeholder='Google Meet link' class='bg-neutral-900 border border-neutral-700'>
- <input id='mtime' placeholder='Scheduled at' class='bg-neutral-900 border border-neutral-700'>
- <button onclick='createMeet()' class='mt-2 px-3 py-1 bg-blue-600'>Create Meeting</button>`}}
-async function createMeet(){await fetch(`${API}/meetings`,{method:'POST',headers:headers(),body:JSON.stringify({subject:msub.value,meet_link:mlink.value,scheduled_at:mtime.value})});loadMeetings();}
-
-loadProjects();loadUpdates();loadMeetings();
+loadMembers();
 </script>
 </body>
 </html>
