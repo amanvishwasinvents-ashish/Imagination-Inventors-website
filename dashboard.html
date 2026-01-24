@@ -5,155 +5,134 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lab OS · Imagination Inventors</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
-  </style>
+  <style>body{font-family:ui-monospace,Menlo,Monaco,Consolas,monospace}</style>
 </head>
 <body class="bg-neutral-950 text-neutral-200">
 
-<!-- Top Bar -->
-<header class="border-b border-neutral-800 bg-neutral-900 sticky top-0 z-10">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-neutral-900 border-r border-neutral-800 p-4 space-y-6">
     <div>
       <h1 class="text-sm font-semibold">Lab OS</h1>
       <p class="text-xs text-neutral-400">Imagination Inventors</p>
     </div>
-    <div id="userLabel" class="text-xs text-neutral-400"></div>
-  </div>
-</header>
 
-<!-- Main -->
-<main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+    <nav class="space-y-2 text-sm">
+      <button onclick="tab('projects')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Projects</button>
+      <button onclick="tab('signals')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Weekly Signals</button>
+      <button onclick="tab('meetings')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Meetings</button>
+      <button onclick="tab('profile')" class="w-full text-left px-2 py-1 hover:bg-neutral-800">Profile</button>
+    </nav>
 
-  <!-- Sidebar -->
-  <aside class="md:col-span-1 space-y-4">
-    <div>
-      <label class="text-xs text-neutral-400">Project</label>
-      <select id="projectSelect" class="w-full mt-1 px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-md focus:outline-none focus:border-blue-500"></select>
-    </div>
-
-    <div class="text-xs text-neutral-500">
-      <p>Internal Lab Workspace</p>
-      <p class="mt-1">Private · Invite-only</p>
-    </div>
+    <div class="text-xs text-neutral-500">Logged in as <span id="userLabel"></span></div>
   </aside>
 
-  <!-- Content -->
-  <section class="md:col-span-3 space-y-8">
+  <!-- Main -->
+  <main class="flex-1 p-6 space-y-8">
 
-    <!-- Project -->
-    <div id="projectCard" class="border border-neutral-800 rounded-lg p-4 space-y-3"></div>
+    <!-- PROJECTS -->
+    <section id="projects" class="tab">
+      <h2 class="text-lg mb-4">Projects</h2>
+      <select id="projectSelect" class="mb-4 bg-neutral-900 border border-neutral-700 px-3 py-2"></select>
+      <div id="projectCard"></div>
+      <div id="workUnits" class="mt-6 space-y-3"></div>
+    </section>
 
-    <!-- Work Units -->
-    <div>
-      <h2 class="text-sm font-semibold text-neutral-300 mb-3">Work Units</h2>
-      <div id="workUnits" class="space-y-3"></div>
-    </div>
-
-    <!-- Weekly Signals -->
-    <div class="border-t border-neutral-800 pt-6">
-      <h2 class="text-sm font-semibold text-neutral-300 mb-3">Weekly Signals</h2>
+    <!-- SIGNALS -->
+    <section id="signals" class="tab hidden">
+      <h2 class="text-lg mb-4">Weekly Signals</h2>
       <div id="weekly"></div>
-    </div>
+    </section>
 
-  </section>
-</main>
+    <!-- MEETINGS -->
+    <section id="meetings" class="tab hidden">
+      <h2 class="text-lg mb-4">Meetings</h2>
+      <div id="meetList" class="space-y-3"></div>
+      <div id="meetAdmin" class="mt-6"></div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile" class="tab hidden">
+      <h2 class="text-lg mb-4">Profile</h2>
+      <p class="text-sm">Email: <span id="email">(not set)</span></p>
+    </section>
+
+  </main>
+</div>
 
 <script>
-const API = "https://lab-os-backend.onrender.com";
-const token = localStorage.getItem("lab_token");
-const role = localStorage.getItem("lab_role");
-const user = localStorage.getItem("lab_user");
-if (!token) location.href = "login.html";
+const API="https://lab-os-backend.onrender.com";
+const token=localStorage.getItem("lab_token");
+const role=localStorage.getItem("lab_role");
+const user=localStorage.getItem("lab_user");
+const email=localStorage.getItem("lab_email")||"";
+if(!token)location.href="login.html";
+document.getElementById("userLabel").innerText=`${user} (${role})`;
+document.getElementById("email").innerText=email||"(placeholder)";
 
-document.getElementById("userLabel").innerText = `${user} · ${role}`;
+function headers(){return{Authorization:token,"Content-Type":"application/json"}};
+function tab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
 
-function headers(){ return { Authorization: token, "Content-Type": "application/json" }; }
+let projects=[],workUnits=[];
 
-let projects=[], workUnits=[];
-
-async function loadAll(){
-  projects = await fetch(`${API}/projects`,{headers:headers()}).then(r=>r.json());
-  workUnits = await fetch(`${API}/work-units`,{headers:headers()}).then(r=>r.json());
-
+async function loadProjects(){
+  projects=await fetch(`${API}/projects`,{headers:headers()}).then(r=>r.json());
+  workUnits=await fetch(`${API}/work-units`,{headers:headers()}).then(r=>r.json());
   const sel=document.getElementById('projectSelect'); sel.innerHTML='';
-  projects.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; sel.appendChild(o); });
-
+  projects.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;sel.appendChild(o)});
   sel.onchange=()=>renderProject(projects.find(p=>p.id==sel.value));
-  if(projects[0]) renderProject(projects[0]);
-  loadWeekly();
+  if(projects[0])renderProject(projects[0]);
 }
 
 function renderProject(p){
   const c=document.getElementById('projectCard');
   if(role==='admin'){
-    c.innerHTML=`
-      <input id="pn" value="${p.name}" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500" />
-      <textarea id="pd" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500">${p.description}</textarea>
-      <button onclick="saveProject(${p.id})" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-sm">Save Project</button>
-    `;
+    c.innerHTML=`<input id='pn' value='${p.name}' class='w-full bg-neutral-900 border border-neutral-700 px-2 py-1'>
+    <textarea id='pd' class='w-full bg-neutral-900 border border-neutral-700 px-2 py-1'>${p.description}</textarea>
+    <button onclick='saveProject(${p.id})' class='mt-2 px-3 py-1 bg-blue-600'>Save</button>`;
   } else {
-    c.innerHTML=`<h2 class="font-medium">${p.name}</h2><p class="text-sm text-neutral-400">${p.description}</p>`;
+    c.innerHTML=`<h3>${p.name}</h3><p class='text-sm text-neutral-400'>${p.description}</p>`;
   }
   renderWork(p.id);
-}
-
-async function saveProject(id){
-  await fetch(`${API}/projects/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({name:pn.value,description:pd.value})});
-  loadAll();
 }
 
 function renderWork(pid){
   const c=document.getElementById('workUnits'); c.innerHTML='';
   workUnits.filter(w=>w.project_id===pid).forEach(w=>{
-    const d=document.createElement('div');
-    d.className=`border rounded-md p-3 ${w.owner===user?'border-blue-500':'border-neutral-800'}`;
-
+    const d=document.createElement('div'); d.className='border border-neutral-800 p-3';
     if(role==='admin'){
-      d.innerHTML=`
-        <input value="${w.title}" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500" />
-        <textarea class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500">${w.description}</textarea>
-        <input value="${w.owner}" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 rounded-md text-neutral-200 caret-white focus:outline-none focus:border-blue-500" />
-        <button onclick="saveWork(${w.id},this.parentElement)" class="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-xs">Save</button>
-      `;
+      d.innerHTML=`<input value='${w.title}' class='w-full bg-neutral-900 border border-neutral-700'>
+      <textarea class='w-full bg-neutral-900 border border-neutral-700'>${w.description}</textarea>
+      <input value='${w.owner}' class='w-full bg-neutral-900 border border-neutral-700'>
+      <button onclick='saveWork(${w.id},this.parentElement)' class='mt-1 px-2 py-1 bg-blue-600'>Save</button>`;
     } else {
-      d.innerHTML=`<div class="font-medium">${w.title}</div><div class="text-xs text-neutral-400">Owner: ${w.owner}</div><div class="text-xs">Status: ${w.status}</div>`;
+      d.innerHTML=`<div>${w.title}</div><div class='text-xs'>${w.status}</div>`;
     }
     c.appendChild(d);
-  });
+  })
 }
 
-async function saveWork(id,el){
-  const i=el.querySelectorAll('input,textarea');
-  await fetch(`${API}/work-units/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({title:i[0].value,description:i[1].value,owner:i[2].value})});
-  loadAll();
-}
+async function saveProject(id){await fetch(`${API}/projects/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({name:pn.value,description:pd.value})});loadProjects();}
+async function saveWork(id,el){const i=el.querySelectorAll('input,textarea');await fetch(`${API}/work-units/${id}`,{method:'PUT',headers:headers(),body:JSON.stringify({title:i[0].value,description:i[1].value,owner:i[2].value})});loadProjects();}
 
-async function loadWeekly(){
-  const box=document.getElementById('weekly');
-  const res=await fetch(`${API}/weekly-signals`,{headers:headers()});
-  const data=await res.json();
+async function loadWeekly(){const box=document.getElementById('weekly');const data=await fetch(`${API}/weekly-signals`,{headers:headers()}).then(r=>r.json());
+ if(role!=='admin'){const s=data.find(x=>x.user===user);if(s){box.innerHTML=`<pre>${s.moved}\n${s.next}\n${s.blockers}</pre>`;return;}
+ box.innerHTML=`<textarea id='wm' class='w-full bg-neutral-900 border border-neutral-700' placeholder='What moved?'></textarea>
+ <textarea id='wn' class='w-full bg-neutral-900 border border-neutral-700' placeholder='What next?'></textarea>
+ <textarea id='wb' class='w-full bg-neutral-900 border border-neutral-700' placeholder='Blockers'></textarea>
+ <button onclick='submitWeekly()' class='mt-2 px-3 py-1 bg-blue-600'>Submit</button>`}
+ else{box.innerHTML=data.map(s=>`<pre>[${s.user}]\n${s.moved}\n${s.next}\n${s.blockers}</pre>`).join('')}}
+async function submitWeekly(){await fetch(`${API}/weekly-signals`,{method:'POST',headers:headers(),body:JSON.stringify({moved:wm.value,next:wn.value,blockers:wb.value})});loadWeekly();}
 
-  if(role!=='admin'){
-    const submitted=data.find(s=>s.user===user);
-    if(submitted){ box.innerHTML=`<pre class="text-xs bg-neutral-900 border border-neutral-800 p-3 rounded-md">${submitted.moved}\n\n${submitted.next}\n\n${submitted.blockers}</pre>`; return; }
-    box.innerHTML=`
-      <textarea id="wm" class="w-full bg-neutral-900 border border-neutral-700 p-2 rounded-md text-neutral-200 caret-white" placeholder="What moved?"></textarea>
-      <textarea id="wn" class="w-full bg-neutral-900 border border-neutral-700 p-2 rounded-md text-neutral-200 caret-white" placeholder="What's next?"></textarea>
-      <textarea id="wb" class="w-full bg-neutral-900 border border-neutral-700 p-2 rounded-md text-neutral-200 caret-white" placeholder="Blockers"></textarea>
-      <button onclick="submitWeekly()" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-sm">Submit Weekly Signal</button>
-    `;
-  } else {
-    box.innerHTML=data.map(s=>`<pre class="text-xs bg-neutral-900 border border-neutral-800 p-3 rounded-md">[${s.user}]\n${s.moved}\n${s.next}\n${s.blockers}</pre>`).join('');
-  }
-}
+async function loadMeetings(){const list=document.getElementById('meetList');const data=await fetch(`${API}/meetings`,{headers:headers()}).then(r=>r.json());list.innerHTML=data.map(m=>`<div class='border border-neutral-800 p-3'><div>${m.title}</div><a href='${m.meet_link}' target='_blank' class='text-blue-400 text-sm'>Join Meet</a></div>`).join('');
+ if(role==='admin'){document.getElementById('meetAdmin').innerHTML=`<input id='mt' placeholder='Title' class='bg-neutral-900 border border-neutral-700'>
+ <input id='ml' placeholder='Google Meet link' class='bg-neutral-900 border border-neutral-700'>
+ <input id='ms' placeholder='Scheduled at' class='bg-neutral-900 border border-neutral-700'>
+ <button onclick='createMeet()' class='mt-2 px-3 py-1 bg-blue-600'>Create Meet</button>`}}
+async function createMeet(){await fetch(`${API}/meetings`,{method:'POST',headers:headers(),body:JSON.stringify({title:mt.value,meet_link:ml.value,scheduled_at:ms.value})});loadMeetings();}
 
-async function submitWeekly(){
-  await fetch(`${API}/weekly-signals`,{method:'POST',headers:headers(),body:JSON.stringify({moved:wm.value,next:wn.value,blockers:wb.value})});
-  loadWeekly();
-}
-
-loadAll();
+loadProjects();loadWeekly();loadMeetings();
 </script>
 </body>
 </html>
