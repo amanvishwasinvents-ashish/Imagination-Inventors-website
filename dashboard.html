@@ -129,28 +129,145 @@
 </div>
 
 <script>
-const API="https://lab-os-backend.onrender.com";
-const token=localStorage.getItem("lab_token");
-const role=localStorage.getItem("lab_role");
-const user=localStorage.getItem("lab_user");
-const email=localStorage.getItem("lab_email")||"";
-if(!token)location.href="login.html";
-document.getElementById("userLabel").innerText=`${user} (${role})`;
-document.getElementById("email").innerText=email||"(placeholder)";
+// ================= CONFIG =================
+const API = "https://lab-os-backend.onrender.com";
+const token = localStorage.getItem("lab_token");
+const role = localStorage.getItem("lab_role");
+const user = localStorage.getItem("lab_user");
+const email = localStorage.getItem("lab_email") || "";
+
+if (!token) location.href = "login.html";
+
+document.getElementById("userLabel").innerText = `${user} (${role})`;
+document.getElementById("email").innerText = email || "(placeholder)";
 
 const isAdmin = role === "admin";
-if(isAdmin) document.getElementById('addMember').classList.remove('hidden');
+const isBuilder = role === "admin" || role === "architect" || role === "mentor";
 
-function headers(){return{Authorization:token,"Content-Type":"application/json"}};
-function tab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
+if (isAdmin) {
+  document.getElementById("createProject").classList.remove("hidden");
+  document.getElementById("addWorkUnit").classList.remove("hidden");
+  document.getElementById("addMember")?.classList.remove("hidden");
+}
 
-// Members
-async function loadMembers(){const list=document.getElementById('memberList');const data=await fetch(`${API}/members`,{headers:headers()}).then(r=>r.json());list.innerHTML=data.map(m=>`<div class='border border-neutral-800 p-3 flex justify-between'><div><div>${m.username}</div><div class='text-xs text-neutral-400'>${m.role}</div></div>${isAdmin && m.username!==user?`<button onclick="removeMember('${m.username}')" class='text-red-400'>Remove</button>`:''}</div>`).join('');}
-async function addMember(){await fetch(`${API}/members`,{method:'POST',headers:headers(),body:JSON.stringify({username:mUser.value,password:mPass.value,role:mRole.value,email:mEmail.value})});mUser.value=mPass.value=mEmail.value='';loadMembers();}
-async function removeMember(u){if(!confirm(`Remove ${u}?`))return;await fetch(`${API}/members/${u}`,{method:'DELETE',headers:headers()});loadMembers();}
+function headers() {
+  return { Authorization: token, "Content-Type": "application/json" };
+}
 
-// default
-loadMembers();
+function tab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ================= PROJECTS =================
+let projects = [];
+let workUnits = [];
+
+async function loadProjects() {
+  projects = await fetch(`${API}/projects`, { headers: headers() }).then(r => r.json());
+  workUnits = await fetch(`${API}/work-units`, { headers: headers() }).then(r => r.json());
+
+  const sel = document.getElementById("projectSelect");
+  sel.innerHTML = "";
+
+  projects.forEach(p => {
+    const o = document.createElement("option");
+    o.value = p.id;
+    o.textContent = p.name;
+    sel.appendChild(o);
+  });
+
+  if (projects.length) renderProject(projects[0]);
+  sel.onchange = () => renderProject(projects.find(p => p.id == sel.value));
+}
+
+async function createProject() {
+  await fetch(`${API}/projects`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify({
+      name: newProjectName.value,
+      description: newProjectDesc.value
+    })
+  });
+  newProjectName.value = "";
+  newProjectDesc.value = "";
+  loadProjects();
+}
+
+function renderProject(p) {
+  const card = document.getElementById("projectCard");
+
+  if (isAdmin) {
+    card.innerHTML = `
+      <input id="pn" value="${p.name}" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">
+      <textarea id="pd" class="w-full bg-neutral-900 border border-neutral-700 px-2 py-1 mb-2">${p.description}</textarea>
+      <button onclick="saveProject(${p.id})" class="px-3 py-1 bg-blue-600">Save Project</button>
+    `;
+  } else {
+    card.innerHTML = `<h3 class="font-medium">${p.name}</h3><p class="text-sm text-neutral-400">${p.description}</p>`;
+  }
+
+  renderWorkUnits(p.id);
+}
+
+async function saveProject(id) {
+  await fetch(`${API}/projects/${id}`, {
+    method: "PUT",
+    headers: headers(),
+    body: JSON.stringify({ name: pn.value, description: pd.value })
+  });
+  loadProjects();
+}
+
+async function createWorkUnit() {
+  await fetch(`${API}/work-units`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify({
+      project_id: projectSelect.value,
+      title: wuTitle.value,
+      description: wuDesc.value,
+      owner: wuOwner.value
+    })
+  });
+  wuTitle.value = wuDesc.value = wuOwner.value = "";
+  loadProjects();
+}
+
+function renderWorkUnits(pid) {
+  const c = document.getElementById("workUnits");
+  c.innerHTML = "";
+
+  workUnits.filter(w => w.project_id == pid).forEach(w => {
+    const d = document.createElement("div");
+    d.className = "border border-neutral-800 p-3";
+
+    let html = `<div class="font-medium">${w.title}</div><div class="text-xs text-neutral-400">${w.description}</div>`;
+
+    if (isBuilder && w.owner === user) {
+      html += `<select onchange="updateStatus(${w.id}, this.value)" class="mt-2 bg-neutral-900 border border-neutral-700">
+        <option ${w.status==='active'?'selected':''}>active</option>
+        <option ${w.status==='blocked'?'selected':''}>blocked</option>
+        <option ${w.status==='done'?'selected':''}>done</option>
+      </select>`;
+    }
+
+    d.innerHTML = html;
+    c.appendChild(d);
+  });
+}
+
+async function updateStatus(id, status) {
+  await fetch(`${API}/work-units/${id}/status`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify({ status })
+  });
+}
+
+// ================= INIT =================
+loadProjects();
 tab('home');
 </script>
 </body>
