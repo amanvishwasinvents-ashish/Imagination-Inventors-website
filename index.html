@@ -2,197 +2,357 @@
 <html lang="en">
 <head>
 
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<!-- Performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Primary SEO -->
-<title>Imagination Inventors | AI & Robotics Innovation Platform</title>
-<meta name="description" content="Imagination Inventors is a deep-tech student-led AI and robotics innovation platform building real-world intelligent systems." />
-<meta name="keywords" content="Imagination Inventors, Robotics India, AI Startup India, Student Robotics, Artificial Intelligence Innovation, Aman Vishwas" />
-<meta name="author" content="Aman Vishwas" />
-<meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://imaginationinventors.netlify.app" />
+<title>Imagination Inventors | Robotics & AI Innovation Lab</title>
+<meta name="description" content="Imagination Inventors is a student-led robotics and AI innovation lab building intelligent machines and physical-world AI systems.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#04040c">
 
-<!-- GEO -->
-<meta name="geo.region" content="IN-BR">
-<meta name="geo.placename" content="Bihar, India">
-<meta name="geo.position" content="25.68;85.21">
-<meta name="ICBM" content="25.68, 85.21">
-
-<!-- Open Graph -->
-<meta property="og:title" content="Imagination Inventors | AI & Robotics Platform" />
-<meta property="og:description" content="Turning imagination into intelligent machines through real-world AI and robotics engineering." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://imaginationinventors.netlify.app" />
-
-<!-- Structured Data -->
-<script type="application/ld+json">
-{
- "@context":"https://schema.org",
- "@type":"Organization",
- "name":"Imagination Inventors",
- "url":"https://imaginationinventors.netlify.app",
- "founder":{
-   "@type":"Person",
-   "name":"Aman Vishwas"
- },
- "description":"AI and Robotics innovation platform building intelligent systems.",
- "address":{
-   "@type":"PostalAddress",
-   "addressCountry":"India"
- }
-}
-</script>
-
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        bg: '#0b0f14',
-        panel: '#111827',
-        accent: '#38bdf8'
-      }
-    }
-  }
-}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
-/* Particle Canvas */
-#particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 0;
+:root{
+  --bg:#04040c;
+  --accent:#00f7ff;
+  --accent2:#00ff88;
+  --glass:rgba(255,255,255,0.06);
+  --text:#ffffff;
 }
-.hero-content {
-  position: relative;
-  z-index: 1;
-}
-</style>
 
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;}
+canvas{position:fixed;top:0;left:0;z-index:-1;}
+
+nav{
+  position:fixed;width:100%;padding:18px 8%;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,0.4);backdrop-filter:blur(15px);
+  z-index:1000;
+}
+nav a{color:white;text-decoration:none;margin-left:25px;transition:0.3s;}
+nav a:hover{color:var(--accent);}
+
+.hero{
+  min-height:100vh;
+  display:flex;justify-content:center;align-items:center;
+  text-align:center;flex-direction:column;
+  padding:100px 20px 40px;
+}
+.hero h1{
+  font-size:clamp(2.2rem,6vw,3.8rem);
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:gradientMove 4s linear infinite;
+}
+@keyframes gradientMove{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+.hero p{
+  margin-top:20px;
+  font-size:1.1rem;
+  opacity:0.8;
+  max-width:700px;
+  line-height:1.6;
+}
+
+.btn-group{
+  margin-top:40px;
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.btn{
+  padding:14px 28px;
+  border-radius:40px;
+  background:var(--glass);
+  color:white;
+  text-decoration:none;
+  transition:0.4s;
+  backdrop-filter:blur(12px);
+}
+.btn:hover{
+  background:var(--accent);
+  color:black;
+  box-shadow:0 0 30px var(--accent);
+}
+
+section{
+  padding:120px 8%;
+}
+
+.section-title{
+  text-align:center;
+  font-size:2.5rem;
+  margin-bottom:60px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:var(--glass);
+  padding:40px;
+  border-radius:20px;
+  backdrop-filter:blur(12px);
+  transition:0.5s;
+}
+.card:hover{
+  transform:translateY(-12px);
+  box-shadow:0 0 45px rgba(0,247,255,0.4);
+}
+
+/* Scroll reveal */
+.reveal{
+  opacity:0;
+  transform:translateY(60px);
+  transition:1s ease;
+}
+.reveal.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* Footer */
+footer{
+  padding:80px 8%;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:40px;
+}
+.footer-title{
+  font-weight:600;
+  margin-bottom:15px;
+}
+footer a{
+  display:block;
+  margin-bottom:10px;
+  text-decoration:none;
+  color:rgba(255,255,255,0.6);
+  transition:0.3s;
+}
+footer a:hover{color:var(--accent);}
+.bottom-bar{
+  margin-top:60px;
+  text-align:center;
+  opacity:0.5;
+  font-size:0.85rem;
+}
+.foundation{
+  padding:120px 8%;
+}
+
+.stack-container{
+  display:flex;
+  flex-direction:column;
+  gap:80px;
+}
+
+/* Full screen cards on mobile */
+.stack-card{
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border-radius:20px;
+  padding:60px 40px;
+  transition:0.8s ease;
+}
+
+.bottom-bar{
+  margin-top:60px;
+  text-align:center;
+  opacity:0.6;
+  font-size:clamp(0.75rem, 2.5vw, 0.9rem);
+  padding:0 15px;
+}
+
+
+
+/* Mobile full screen scroll effect */
+@media(max-width:768px){
+  .stack-card{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+  }
+}
+
+</style>
 </head>
 
-<body class="dark bg-bg text-gray-200 font-sans">
+<body>
 
-<canvas id="particles"></canvas>
+<canvas id="network"></canvas>
 
 <!-- Navbar -->
-<nav class="fixed w-full z-50 bg-bg/80 backdrop-blur border-b border-gray-800">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold tracking-wide text-accent">
-      Imagination Inventors
-    </h1>
-    <div class="space-x-6 hidden md:block">
-      <a href="index.html" class="hover:text-accent">Home</a>
-      <a href="about.html" class="hover:text-accent">About</a>
-      <a href="login.html" class="hover:text-accent">Login</a>
-    </div>
+<nav>
+  <h3 style="color:var(--accent);">Imagination Inventors</h3>
+  <div>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/login">Login</a>
   </div>
 </nav>
 
 <!-- Hero -->
-<section class="min-h-screen flex items-center justify-center px-6 pt-20">
-  <div class="hero-content text-center max-w-3xl">
-    <h2 class="text-4xl md:text-6xl font-extrabold leading-tight">
-      Turning <span class="text-accent">Imagination</span><br />
-      into <span class="text-accent">Inventions</span>
-    </h2>
+<div class="hero reveal">
+  <h1>Turning Imagination<br>Into Intelligent Machines</h1>
+  <p>
+    Imagination Inventors is a student-led robotics and AI initiative founded by Aman Vishwas.
 
-    <p class="mt-6 text-gray-400 text-lg">
-      A student-led robotics & AI initiative building real-world intelligent systems.
-      <br>
-      <span class="text-accent">
-      A new kind of interactive intelligence system where physical-world AI and game mechanics merge.
-      </span>
-    </p>
+We build real, working intelligent systems — not just ideas. Our focus is on combining hardware, embedded systems, computer vision, and voice intelligence into machines that interact naturally with humans.
 
-    <div class="mt-8 flex justify-center gap-4">
-      <a href="about.html" class="px-6 py-3 rounded-xl bg-accent text-black font-semibold hover:scale-105 transition">
-        Learn More
-      </a>
-      <a href="login.html" class="px-6 py-3 rounded-xl border border-gray-700 hover:border-accent transition">
-        Team Login
-      </a>
+From physical AI robots like AmVish to experimental interactive systems, every project is built hands-on, tested in real environments, and designed to solve real problems.
+
+We believe innovation doesn’t require a big lab — it requires vision, consistency, and the courage to build.
+  </p>
+
+  <div class="btn-group">
+    <a class="btn" href="/about">Learn More</a>
+    <a class="btn" href="/login">Team Login</a>
+    <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSe_jxnqDS5M8EQyGIKxS5CTYZNJYGpOGm1oGTKGfm_SaLBk1g/viewform?usp=header">
+      Collaborate With Us
+    </a>
+  </div>
+</div>
+
+<!-- Foundation -->
+<section class="foundation">
+
+  <h2 class="section-title reveal">Our Foundation</h2>
+
+  <div class="stack-container">
+
+    <div class="stack-card reveal">
+      <h3>Mission</h3>
+      <p>
+        Build intelligent machines that interact naturally with humans.
+      </p>
     </div>
 
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_jxnqDS5M8EQyGIKxS5CTYZNJYGpOGm1oGTKGfm_SaLBk1g/viewform?usp=header"
-       class="mt-6 inline-block px-6 py-3 rounded-xl border border-gray-700 hover:border-accent hover:bg-panel transition font-semibold">
-      Collaborate with us
-    </a>
+    <div class="stack-card reveal">
+      <h3>Vision</h3>
+      <p>
+        Make advanced AI and robotics accessible to young innovators.
+      </p>
+    </div>
+
+    <div class="stack-card reveal">
+      <h3>Approach</h3>
+      <p>
+        Hands-on engineering, real hardware, real intelligence.
+      </p>
+    </div>
+
   </div>
 </section>
 
-<!-- Mission -->
-<section class="py-24 bg-panel relative z-10">
-  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
-    <div>
-      <h3 class="text-xl font-bold mb-2">🚀 Mission</h3>
-      <p class="text-gray-400">Build intelligent machines that interact naturally with humans.</p>
-    </div>
-    <div>
-      <h3 class="text-xl font-bold mb-2">🧠 Vision</h3>
-      <p class="text-gray-400">Make advanced AI and robotics accessible to young innovators.</p>
-    </div>
-    <div>
-      <h3 class="text-xl font-bold mb-2">⚙️ Approach</h3>
-      <p class="text-gray-400">Hands-on engineering, real hardware, real intelligence.</p>
-    </div>
-  </div>
-</section>
 
-<!-- Footer (unchanged, just elevated z-index) -->
-<footer class="border-t border-gray-800 bg-bg py-12 text-gray-400 relative z-10">
-  <div class="text-center text-xs text-gray-500">
-    Founded by 
-    <a href="https://amanvishwas.netlify.app/" class="text-accent hover:underline">
-      Aman Vishwas
-    </a>
-    · © 2026 Imagination Inventors
+<!-- Footer (Original Quick Links preserved) -->
+<footer>
+  <div class="footer-grid">
+
+    <div>
+      <div class="footer-title">Imagination Inventors</div>
+      <p style="opacity:0.7;">
+        A builder-led robotics and AI initiative focused on creating
+        real-world intelligent systems through hands-on engineering
+        and experimentation.
+      </p>
+    </div>
+
+    <div>
+      <div class="footer-title">Projects</div>
+      <a href="https://amvish.netlify.app">AmVish 2.0</a>
+    </div>
+
+    <div>
+      <div class="footer-title">Connect</div>
+      <a href="https://github.com/YOUR_USERNAME">GitHub</a>
+      <a href="https://www.linkedin.com/in/YOUR_PROFILE">LinkedIn</a>
+    </div>
+
+    <div>
+      <div class="footer-title">Quick Links</div>
+      <a href="/about">About</a>
+      <a href="/login">Team Login</a>
+      <a href="">Join / Collaborate</a>
+    </div>
+
   </div>
+
+<div class="bottom-bar">
+  Founded by <a href="https://amanvishwas.netlify.app/" target="_blank">Aman Vishwas</a>
+</div>
+
+
+
+
 </footer>
 
-<!-- Particle Script -->
 <script>
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
+/* Scroll Reveal */
+window.addEventListener('scroll',()=>{
+  document.querySelectorAll('.reveal').forEach(el=>{
+    if(el.getBoundingClientRect().top < window.innerHeight-100){
+      el.classList.add('active');
+    }
+  });
+});
 
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+/* Particle Background */
+const canvas=document.getElementById("network");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let mouse={x:null,y:null};
+window.addEventListener('mousemove',e=>{mouse.x=e.x;mouse.y=e.y;});
+
+let particles=[];
+for(let i=0;i<100;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    dx:(Math.random()-0.5)*1,
+    dy:(Math.random()-0.5)*1
+  });
 }
-resize();
-window.addEventListener("resize", resize);
 
-let particles = Array.from({ length: 70 }, () => ({
-  x: Math.random() * canvas.width,
-  y: Math.random() * canvas.height,
-  dx: (Math.random() - 0.5) * 0.5,
-  dy: (Math.random() - 0.5) * 0.5
-}));
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  particles.forEach(p => {
-    p.x += p.dx;
-    p.y += p.dy;
-
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    p.x+=p.dx;p.y+=p.dy;
+    if(mouse.x){
+      let dx=p.x-mouse.x;
+      let dy=p.y-mouse.y;
+      let dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<100){
+        p.x+=dx/dist;
+        p.y+=dy/dist;
+      }
+    }
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
-    ctx.fillStyle = "#38bdf8";
+    ctx.arc(p.x,p.y,2,0,Math.PI*2);
+    ctx.fillStyle="#00f7ff";
     ctx.fill();
   });
-
   requestAnimationFrame(animate);
 }
 animate();
