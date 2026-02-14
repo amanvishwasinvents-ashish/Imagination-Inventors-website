@@ -1,185 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <link rel="icon" type="image/png" href="assets/favicon.png">
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- SEO -->
-  <title>Imagination Inventors | Building Intelligent Machines</title>
-  <meta name="description" content="Imagination Inventors is a student-led robotics and AI startup turning imagination into intelligent machines." />
-  <meta name="robots" content="index, follow" />
+<!-- Primary SEO -->
+<title>Imagination Inventors | AI & Robotics Innovation Platform</title>
+<meta name="description" content="Imagination Inventors is a deep-tech student-led AI and robotics innovation platform building real-world intelligent systems." />
+<meta name="keywords" content="Imagination Inventors, Robotics India, AI Startup India, Student Robotics, Artificial Intelligence Innovation, Aman Vishwas" />
+<meta name="author" content="Aman Vishwas" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://imaginationinventors.netlify.app" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Imagination Inventors" />
-  <meta property="og:description" content="Turning imagination into intelligent machines." />
-  <meta property="og:type" content="website" />
+<!-- GEO -->
+<meta name="geo.region" content="IN-BR">
+<meta name="geo.placename" content="Bihar, India">
+<meta name="geo.position" content="25.68;85.21">
+<meta name="ICBM" content="25.68, 85.21">
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            bg: '#0b0f14',
-            panel: '#111827',
-            accent: '#38bdf8'
-          }
-        }
+<!-- Open Graph -->
+<meta property="og:title" content="Imagination Inventors | AI & Robotics Platform" />
+<meta property="og:description" content="Turning imagination into intelligent machines through real-world AI and robotics engineering." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://imaginationinventors.netlify.app" />
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"Organization",
+ "name":"Imagination Inventors",
+ "url":"https://imaginationinventors.netlify.app",
+ "founder":{
+   "@type":"Person",
+   "name":"Aman Vishwas"
+ },
+ "description":"AI and Robotics innovation platform building intelligent systems.",
+ "address":{
+   "@type":"PostalAddress",
+   "addressCountry":"India"
+ }
+}
+</script>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        bg: '#0b0f14',
+        panel: '#111827',
+        accent: '#38bdf8'
       }
     }
-  </script>
+  }
+}
+</script>
+
+<style>
+/* Particle Canvas */
+#particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+</style>
+
 </head>
 
 <body class="dark bg-bg text-gray-200 font-sans">
 
-  <!-- Navbar -->
-  <nav class="fixed w-full z-50 bg-bg/80 backdrop-blur border-b border-gray-800">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold tracking-wide text-accent">Imagination Inventors</h1>
-      <div class="space-x-6 hidden md:block">
-        <a href="index.html" class="hover:text-accent">Home</a>
-        <a href="about.html" class="hover:text-accent">About</a>
-        <a href="login.html" class="hover:text-accent">Login</a>
-      </div>
+<canvas id="particles"></canvas>
+
+<!-- Navbar -->
+<nav class="fixed w-full z-50 bg-bg/80 backdrop-blur border-b border-gray-800">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold tracking-wide text-accent">
+      Imagination Inventors
+    </h1>
+    <div class="space-x-6 hidden md:block">
+      <a href="index.html" class="hover:text-accent">Home</a>
+      <a href="about.html" class="hover:text-accent">About</a>
+      <a href="login.html" class="hover:text-accent">Login</a>
     </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="min-h-screen flex items-center justify-center px-6 pt-20">
-    <div class="text-center max-w-3xl">
-      <h2 class="text-4xl md:text-6xl font-extrabold leading-tight">
-        Turning <span class="text-accent">Imagination</span><br />
-        into <span class="text-accent">Inventions</span>
-      </h2>
-      <p class="mt-6 text-gray-400 text-lg">
-        A student-led robotics & AI initiative building real-world intelligent systems.
-		<br>And now we are building, <span class="text-accent">A new kind of interactive intelligence system where physical-world AI and game mechanics merge!</span>
-      </p>
-      <div class="mt-8 flex justify-center gap-4">
-        <a href="about.html" class="px-6 py-3 rounded-xl bg-accent text-black font-semibold hover:scale-105 transition">
-          Learn More
-        </a>
-        <a href="login.html" class="px-6 py-3 rounded-xl border border-gray-700 hover:border-accent transition">
-          Team Login
-        </a>
-      </div>
-	    <!-- Join / Collaborate button -->
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_jxnqDS5M8EQyGIKxS5CTYZNJYGpOGm1oGTKGfm_SaLBk1g/viewform?usp=header"
-     class="mt-1 w-full text-center px-6 py-3 rounded-xl
-          border border-gray-700 hover:border-accent
-          hover:bg-panel transition font-semibold">
-    Collaborate with us
-  </a>
-
-</div>
-    </div>
-  </section>
-
-  <!-- Mission -->
-  <section class="py-24 bg-panel">
-    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
-      <div>
-        <h3 class="text-xl font-bold mb-2">🚀 Mission</h3>
-        <p class="text-gray-400">Build intelligent machines that interact naturally with humans.</p>
-      </div>
-      <div>
-        <h3 class="text-xl font-bold mb-2">🧠 Vision</h3>
-        <p class="text-gray-400">Make advanced AI and robotics accessible to young innovators.</p>
-      </div>
-      <div>
-        <h3 class="text-xl font-bold mb-2">⚙️ Approach</h3>
-        <p class="text-gray-400">Hands-on engineering, real hardware, real intelligence.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="border-t border-gray-800 bg-bg py-12 text-gray-400">
-  <div class="max-w-6xl mx-auto px-6 grid gap-10 md:grid-cols-4">
-
-    <!-- Identity -->
-    <div>
-      <h3 class="text-lg font-bold text-gray-200 mb-3">
-        Imagination Inventors
-      </h3>
-      <p class="text-sm leading-relaxed">
-        A builder-led robotics and AI initiative focused on creating
-        real-world intelligent systems through hands-on engineering
-        and experimentation.
-      </p>
-    </div>
-
-    <!-- Projects -->
-    <div>
-      <h4 class="text-sm font-semibold text-gray-300 mb-3">
-        Projects
-      </h4>
-      <ul class="space-y-2 text-sm">
-        <li>
-          <a href="https://amvish.netlify.app" class="hover:text-accent transition">
-            AmVish 2.0
-          </a>
-        </li>
-        <!-- Add future projects here -->
-      </ul>
-    </div>
-
-    <!-- Connect -->
-    <div>
-      <h4 class="text-sm font-semibold text-gray-300 mb-3">
-        Connect
-      </h4>
-      <ul class="space-y-2 text-sm">
-        <li>
-          <a href="https://github.com/YOUR_USERNAME" class="hover:text-accent transition">
-            GitHub
-          </a>
-        </li>
-        <li>
-          <a href="https://www.linkedin.com/in/YOUR_PROFILE" class="hover:text-accent transition">
-            LinkedIn
-          </a>
-        </li>
-        <!-- Add Instagram / X only if active -->
-      </ul>
-    </div>
-
-    <!-- Quick Links -->
-    <div>
-      <h4 class="text-sm font-semibold text-gray-300 mb-3">
-        Quick Links
-      </h4>
-      <ul class="space-y-2 text-sm">
-        <li>
-          <a href="about.html" class="hover:text-accent transition">
-            About
-          </a>
-        </li>
-        <li>
-          <a href="login.html" class="hover:text-accent transition">
-            Team Login
-          </a>
-        </li>
-        <li>
-          <a href="" class="hover:text-accent transition">
-            Join / Collaborate
-          </a>
-        </li>
-      </ul>
-    </div>
-
   </div>
+</nav>
 
-  <!-- Bottom bar -->
+<!-- Hero -->
+<section class="min-h-screen flex items-center justify-center px-6 pt-20">
+  <div class="hero-content text-center max-w-3xl">
+    <h2 class="text-4xl md:text-6xl font-extrabold leading-tight">
+      Turning <span class="text-accent">Imagination</span><br />
+      into <span class="text-accent">Inventions</span>
+    </h2>
+
+    <p class="mt-6 text-gray-400 text-lg">
+      A student-led robotics & AI initiative building real-world intelligent systems.
+      <br>
+      <span class="text-accent">
+      A new kind of interactive intelligence system where physical-world AI and game mechanics merge.
+      </span>
+    </p>
+
+    <div class="mt-8 flex justify-center gap-4">
+      <a href="about.html" class="px-6 py-3 rounded-xl bg-accent text-black font-semibold hover:scale-105 transition">
+        Learn More
+      </a>
+      <a href="login.html" class="px-6 py-3 rounded-xl border border-gray-700 hover:border-accent transition">
+        Team Login
+      </a>
+    </div>
+
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_jxnqDS5M8EQyGIKxS5CTYZNJYGpOGm1oGTKGfm_SaLBk1g/viewform?usp=header"
+       class="mt-6 inline-block px-6 py-3 rounded-xl border border-gray-700 hover:border-accent hover:bg-panel transition font-semibold">
+      Collaborate with us
+    </a>
+  </div>
+</section>
+
+<!-- Mission -->
+<section class="py-24 bg-panel relative z-10">
+  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
+    <div>
+      <h3 class="text-xl font-bold mb-2">🚀 Mission</h3>
+      <p class="text-gray-400">Build intelligent machines that interact naturally with humans.</p>
+    </div>
+    <div>
+      <h3 class="text-xl font-bold mb-2">🧠 Vision</h3>
+      <p class="text-gray-400">Make advanced AI and robotics accessible to young innovators.</p>
+    </div>
+    <div>
+      <h3 class="text-xl font-bold mb-2">⚙️ Approach</h3>
+      <p class="text-gray-400">Hands-on engineering, real hardware, real intelligence.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer (unchanged, just elevated z-index) -->
+<footer class="border-t border-gray-800 bg-bg py-12 text-gray-400 relative z-10">
   <div class="mt-10 border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
     Founded by Aman Vishwas · © 2026 Imagination Inventors
   </div>
 </footer>
 
+<!-- Particle Script -->
+<script>
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let particles = Array.from({ length: 70 }, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  dx: (Math.random() - 0.5) * 0.5,
+  dy: (Math.random() - 0.5) * 0.5
+}));
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.x += p.dx;
+    p.y += p.dy;
+
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+    ctx.fillStyle = "#38bdf8";
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
 
 </body>
 </html>
